@@ -26,19 +26,25 @@ import { APP_GUARD } from '@nestjs/core';
 
 
 //connexion a mysql
-    TypeOrmModule.forRootAsync({
-        inject: [ConfigService],
-        useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_BASE_DE_DONNE'),
-        autoLoadEntities: true,
-        synchronize: false,
-      }),
-    }),
+   TypeOrmModule.forRootAsync({
+  inject: [ConfigService],
+  useFactory: (configService: ConfigService) => ({
+    type: 'mysql',
+    host: configService.get<string>('DB_HOST'),
+    port: configService.get<number>('DB_PORT'),
+    username: configService.get<string>('DB_USERNAME'),
+    password: configService.get<string>('DB_PASSWORD'),
+    database: configService.get<string>('DB_BASE_DE_DONNE'),
+
+    ssl:
+      configService.get<string>('DB_SSL') === 'true'
+        ? { rejectUnauthorized: false }
+        : false,
+
+    autoLoadEntities: true,
+    synchronize: false,
+  }),
+}),
 
     ContactsModule,
     UserModule,
